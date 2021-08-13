@@ -30,7 +30,9 @@ namespace Coffee.UIExtensions
 		[Tooltip("Given the fit graphic's transform or sprite's transform, it will work as a offset to adjust fit target position")]
 		[SerializeField] private Vector2 Offset;
 		[Tooltip("Given the fit graphic's transform or sprite's transform, it will work as a scale factor to adjust fit target size")]
-		[SerializeField] private float scaleFactor = 1f;
+		[SerializeField] private Vector2 scaleFactor = Vector2.one;
+		[Tooltip("Given the fit graphic's transform, it will use the same pivot as the target")] 
+		[SerializeField] private bool usePivotOnFitToRectTransform=true;
 		[Tooltip("Fit graphic's transform to target transform on LateUpdate every frame.")]
 		[SerializeField] bool m_FitOnLateUpdate;
 		[Tooltip ("Unmask affects only for children.")]
@@ -162,8 +164,11 @@ namespace Coffee.UIExtensions
 		public void FitTo(RectTransform target, Vector2 size, Vector3 offSet)
 		{
 			var rt = transform as RectTransform;
-			
-			rt.pivot = target.pivot;
+
+			if (usePivotOnFitToRectTransform)
+			{
+				rt.pivot = target.pivot;
+			}
 			rt.position = target.position + offSet;
 			rt.rotation = target.rotation;
 
@@ -203,6 +208,9 @@ namespace Coffee.UIExtensions
 		{
 			if (m_FitTarget)
 			{
+				/*Debug.Log("rectSize: "+m_FitTarget.rect.size);
+				Debug.Log("scaleFactor: "+scaleFactor);
+				Debug.Log("multiply: "+m_FitTarget.rect.size * scaleFactor);*/
 				FitTo(m_FitTarget,m_FitTarget.rect.size * scaleFactor,Offset);
 			} else if (m_SpriteTarget) 
 			{
